@@ -1,16 +1,19 @@
-from genanki import Note, CLOZE_MODEL
-
 from dataclasses import dataclass
+from typing import List
 
+from genanki import Note, CLOZE_MODEL # type: ignore
+
+# TODO: Do error handling.
+# TODO: Typing.
 # TODO: Clean up my terminology.
 @dataclass
 class Card:
     """Keeps the result of parsing a single card."""
     contents: str
 
-def parse(contents):
+def parse(contents: str) -> List[Card]:
     paragraphs = contents.split("\n\n")
-    cards = []
+    cards: List[str] = []
     next_is_card = False
 
     for paragraph in paragraphs:
@@ -23,7 +26,7 @@ def parse(contents):
 
     return [parse_card(card) for card in cards]
 
-def parse_card(card):
+def parse_card(card: str) -> Card:
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
     # 2. Join with ['{{c1::', '}}', '{{c2::', '}}', ..]
@@ -31,7 +34,7 @@ def parse_card(card):
     assert len(parts) % 2 == 1
     # TODO: What about cards that end with a ==?
 
-    result = []
+    result: List[str] = []
     s = separators()
     for part in parts:
         result += [part, next(s)]
