@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Generator, List
+from random import randrange
 
 from genanki import Note, CLOZE_MODEL # type: ignore
 
@@ -10,8 +11,19 @@ from genanki import Note, CLOZE_MODEL # type: ignore
 class Card:
     """Keeps the result of parsing a single card."""
     contents: str
+    guid: int
 
-def parse(contents: str) -> List[Card]:
+GuidGenerator = Generator[int, None, None]
+def random_generator() -> GuidGenerator:
+    # Anki card ids are stored as sqlite3 integers.
+    # https://github.com/ankidroid/Anki-Android/wiki/Database-Structure
+    # The max value is 8 bytes long.
+    MAX = 1 << 64
+    while True:
+        yield randrange(MAX)
+
+def parse(contents: str,
+        guid_generator: GuidGenerator = random_generator()) -> List[Card]:
     paragraphs = contents.split("\n\n")
     cards: List[str] = []
     next_is_card = False
@@ -24,9 +36,11 @@ def parse(contents: str) -> List[Card]:
         elif paragraph == "<!-- cloze -->":
             next_is_card = True
 
-    return [parse_card(card) for card in cards]
+    return [parse_card(card, guid_generator) for card in cards]
 
-def parse_card(card: str) -> Card:
+# TODO: HTML encode contents:
+# https://github.com/kerrickstaley/genanki#my-field-data-is-getting-garbled
+def parse_card(card: str, guid_generator: GuidGenerator) -> Card:
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
     # 2. Join with ['{{c1::', '}}', '{{c2::', '}}', ..]
@@ -39,7 +53,10 @@ def parse_card(card: str) -> Card:
     for part in parts:
         result += [part, next(s)]
 
-    return Card(contents="".join(result[:-1]))
+    return Card(
+        contents="".join(result[:-1]),
+        guid=next(guid_generator)
+    )
 
 def separators():
     num = 1
