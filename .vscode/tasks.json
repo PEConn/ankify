@@ -6,7 +6,7 @@
       {
         "label": "Run tests",
         "type": "shell",
-        "command": "pytest",
+        "command": "pytest -vv",
         "group": "test",
         "presentation": {
           "reveal": "always",

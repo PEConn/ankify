@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generator, List
+from typing import Generator, List, Optional
 from random import randrange
 
 from genanki import Note, CLOZE_MODEL # type: ignore
@@ -25,22 +25,49 @@ def random_generator() -> GuidGenerator:
 def parse(contents: str,
         guid_generator: GuidGenerator = random_generator()) -> List[Card]:
     paragraphs = contents.split("\n\n")
-    cards: List[str] = []
-    next_is_card = False
+    cards: List[Card] = []
+    cloze_for_next: Optional[ClozeTag] = None
 
     for paragraph in paragraphs:
         paragraph = paragraph.strip()
-        if next_is_card:
-            cards += [paragraph]
-            next_is_card = False
-        elif paragraph == "<!-- cloze -->":
-            next_is_card = True
 
-    return [parse_card(card, guid_generator) for card in cards]
+        if cloze_for_next:
+            if cloze_for_next.guid is None:
+                guid = next(guid_generator)
+            else:
+                guid = cloze_for_next.guid
+            cards += [parse_card(paragraph, guid)]
+
+        cloze_for_next = parse_cloze_tag(paragraph)
+
+    return cards
+
+@dataclass
+class ClozeTag:
+    guid: Optional[int]
+
+def parse_cloze_tag(line: str) -> Optional[ClozeTag]:
+    if not line.startswith("<!--") or not line.endswith("-->"):
+        return None
+    
+    parts = line.split(" ")
+
+    if not "cloze" in parts:
+        return None
+    
+    for part in parts:
+        if not part.startswith("id:"):
+            continue
+        try:
+            return ClozeTag(guid = int(part[len("id:"):]))
+        except ValueError:
+            pass
+    
+    return ClozeTag(guid = None)
 
 # TODO: HTML encode contents:
 # https://github.com/kerrickstaley/genanki#my-field-data-is-getting-garbled
-def parse_card(card: str, guid_generator: GuidGenerator) -> Card:
+def parse_card(card: str, guid: int) -> Card:
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
     # 2. Join with ['{{c1::', '}}', '{{c2::', '}}', ..]
@@ -55,7 +82,7 @@ def parse_card(card: str, guid_generator: GuidGenerator) -> Card:
 
     return Card(
         contents="".join(result[:-1]),
-        guid=next(guid_generator)
+        guid=guid
     )
 
 def separators():
