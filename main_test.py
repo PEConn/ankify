@@ -1,4 +1,4 @@
-from main import Card, parse, parse_card, separators
+from main import Card, GuidGenerator, parse, parse_card, separators
 
 SINGLE_CARD = """
 some text
@@ -20,6 +20,12 @@ The capital of ==France== is ==Paris==.
 The capital of ==Germany== is ==Berlin==.
 """
 
+def counting_generator() -> GuidGenerator:
+    num = 0
+    while True:
+        yield num
+        num += 1
+
 def test_parse_num_results_single():
     assert 1 == len(parse(SINGLE_CARD))
 
@@ -29,7 +35,7 @@ def test_parse_num_results_multiple():
 def test_parse_single():
     exp = [Card(contents = "The capital of {{c1::France}} is {{c2::Paris}}.", guid=0)]
 
-    assert exp == parse(SINGLE_CARD)
+    assert exp == parse(SINGLE_CARD, guid_generator=counting_generator())
 
 def test_parse_multiple():
     exp = [
@@ -37,7 +43,7 @@ def test_parse_multiple():
         Card(contents = "The capital of {{c1::Germany}} is {{c2::Berlin}}.", guid=1)
     ]
 
-    assert exp == parse(MULTI_CARD)
+    assert exp == parse(MULTI_CARD, guid_generator=counting_generator())
 
 def test_separators():
     s = separators()
@@ -50,4 +56,4 @@ def test_parse_card():
     card = "The capital of ==France== is ==Paris==."
     exp = Card(contents = "The capital of {{c1::France}} is {{c2::Paris}}.", guid=0)
 
-    assert exp == parse_card(card)
+    assert exp == parse_card(card, guid_generator=counting_generator())
