@@ -3,6 +3,7 @@ from typing import List
 from pyfakefs.fake_filesystem import FakeFilesystem
 
 from file_reader import tree_walk, process_tree
+from test_utils import read
 
 
 class Collector:
@@ -35,11 +36,6 @@ def test_tree_walk_extension(fs: FakeFilesystem):
     tree_walk("/", results.add, ".txt")
 
     assert ["/somefile.txt", "/dir/otherfile.txt"] == results.contents
-
-
-def read(filename: str) -> str:
-    with open(filename, "r", encoding="utf-8") as f:
-        return f.read()
 
 
 def test_process_tree(fs: FakeFilesystem):
