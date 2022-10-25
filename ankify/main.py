@@ -28,7 +28,7 @@ class ParseProcessor:
 
 
 def write_anki_deck(cards: List[Card]) -> None:
-    deck = Deck(123456789, "Markdown Notes")
+    deck = Deck(123456789, "Obsidian Notes")
 
     for card in cards:
         deck.add_note(Note(model=CLOZE_MODEL, fields=[card.contents, ""], guid=card.guid))  # type: ignore
