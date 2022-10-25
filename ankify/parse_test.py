@@ -35,7 +35,11 @@ def test_parse_num_results_multiple():
 
 
 def test_parse_single():
-    exp = [Card(contents="The capital of {{c1::France}} is {{c2::Paris}}.", guid=0)]
+    exp = [
+        Card(
+            contents="The capital of {{c1::France}} is {{c2::Paris}}.", guid=0, new=True
+        )
+    ]
 
     assert exp == parse(SINGLE_CARD, guid_generator=counting_generator()).cards
 
@@ -58,8 +62,16 @@ def test_parse_single_updated_file():
 
 def test_parse_multiple():
     exp = [
-        Card(contents="The capital of {{c1::France}} is {{c2::Paris}}.", guid=123),
-        Card(contents="The capital of {{c1::Germany}} is {{c2::Berlin}}.", guid=0),
+        Card(
+            contents="The capital of {{c1::France}} is {{c2::Paris}}.",
+            guid=123,
+            new=False,
+        ),
+        Card(
+            contents="The capital of {{c1::Germany}} is {{c2::Berlin}}.",
+            guid=0,
+            new=True,
+        ),
     ]
 
     assert exp == parse(MULTI_CARD, guid_generator=counting_generator()).cards

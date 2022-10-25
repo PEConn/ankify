@@ -24,7 +24,7 @@ def parse(
 
     for paragraph in paragraphs:
         if cloze_for_next:
-            cards += [parse_card(paragraph, cloze_for_next.guid)]
+            cards += [parse_card(paragraph, cloze_for_next)]
 
         cloze_for_next = parse_cloze_tag(paragraph, guid_generator)
 

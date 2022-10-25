@@ -59,7 +59,9 @@ if __name__ == "__main__":
     else:
         cards = generate_cards(args[1])
 
-        print(f"Generated {len(cards)} cards.")
+        new_cards = len([card for card in cards if card.new])
+
+        print(f"Generated {len(cards)} ({new_cards} new) cards.")
 
         if (len(cards)) > 0:
             write_anki_deck(cards)

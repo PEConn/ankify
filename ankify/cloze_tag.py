@@ -15,6 +15,9 @@ class ClozeTag:
     prefix: str = ""
     suffix: str = ""
 
+    # Whether this cloze already had a guid, or whether it's new.
+    new: bool = False
+
     def to_string(self):
         return f"{self.prefix}<!-- cloze id:{self.guid} -->{self.suffix}"
 
@@ -43,4 +46,4 @@ def parse_cloze_tag(line: str, guid_generator: GuidGenerator) -> Optional[ClozeT
         except ValueError:
             pass
 
-    return ClozeTag(guid=next(guid_generator), prefix=prefix, suffix=suffix)
+    return ClozeTag(guid=next(guid_generator), prefix=prefix, suffix=suffix, new=True)

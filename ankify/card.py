@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Generator, List
 
+from cloze_tag import ClozeTag
+
 # TODO: Clean up my terminology.
 @dataclass
 class Card:
@@ -9,10 +11,13 @@ class Card:
     contents: str
     guid: int
 
+    # Whether or not the card is new.
+    new: bool = False
+
 
 # TODO: HTML encode contents:
 # https://github.com/kerrickstaley/genanki#my-field-data-is-getting-garbled
-def parse_card(card: str, guid: int) -> Card:
+def parse_card(card: str, tag: ClozeTag) -> Card:
     card = card.strip()
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
@@ -26,7 +31,7 @@ def parse_card(card: str, guid: int) -> Card:
     for part in parts:
         result += [part, next(s)]
 
-    return Card(contents="".join(result[:-1]), guid=guid)
+    return Card(contents="".join(result[:-1]), guid=tag.guid, new=tag.new)
 
 
 def separators() -> Generator[str, None, None]:

@@ -3,7 +3,9 @@ from test_utils import counting_generator
 
 
 def test_parse_cloze_tag_no_id():
-    assert ClozeTag(guid=0) == parse_cloze_tag("<!-- cloze -->", counting_generator())
+    assert ClozeTag(guid=0, new=True) == parse_cloze_tag(
+        "<!-- cloze -->", counting_generator()
+    )
 
 
 def test_parse_cloze_tag_invalid_no_keyword():
@@ -17,7 +19,7 @@ def test_parse_cloze_tag_with_id():
 
 
 def test_parse_cloze_tag_with_invalid_id():
-    assert ClozeTag(guid=0) == parse_cloze_tag(
+    assert ClozeTag(guid=0, new=True) == parse_cloze_tag(
         "<!-- cloze id:apple -->", counting_generator()
     )
 
