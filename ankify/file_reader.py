@@ -19,8 +19,9 @@ def process_tree(root: str, function: Callable[[str], str], extension: str = ".m
             contents = f.read()
             new_contents = function(contents)
 
-            f.seek(0)
-            f.write(new_contents)
-            f.truncate()
+            if contents != new_contents:
+                f.seek(0)
+                f.write(new_contents)
+                f.truncate()
 
     tree_walk(root, process, extension=extension)

@@ -7,7 +7,7 @@ GuidGenerator = Generator[int, None, None]
 def random_generator() -> GuidGenerator:
     # Anki card ids are stored as sqlite3 integers.
     # https://github.com/ankidroid/Anki-Android/wiki/Database-Structure
-    # The max value is 8 bytes long.
-    MAX = 1 << 64
+    # The max value is 8 bytes long, but is signed.
+    MAX = 1 << 63
     while True:
         yield randrange(MAX)
