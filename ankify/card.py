@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Generator, List
 
 from cloze_tag import ClozeTag
+from markdown import convert
 
 # TODO: Clean up my terminology.
 @dataclass
@@ -18,8 +19,6 @@ class Card:
     grouping: str = ""
 
 
-# TODO: HTML encode contents:
-# https://github.com/kerrickstaley/genanki#my-field-data-is-getting-garbled
 def parse_card(card: str, tag: ClozeTag) -> Card:
     card = card.strip()
     # card = "The capital of ==France== is ==Paris==."
@@ -34,4 +33,6 @@ def parse_card(card: str, tag: ClozeTag) -> Card:
     for part in parts:
         result += [part, next(s)]
 
-    return Card(contents="".join(result[:-1]), guid=tag.guid, new=tag.new)
+    contents: str = convert("".join(result[:-1]))
+
+    return Card(contents=contents, guid=tag.guid, new=tag.new)

@@ -47,15 +47,17 @@ def test_run(fs: FakeFilesystem):
 
     assert [
         Card(
-            contents="The capital of {{c1::France}} is {{c2::Paris}}.", guid=0, new=True
+            contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
+            guid=0,
+            new=True,
         ),
         Card(
-            contents="The capital of {{c1::France}} is {{c2::Paris}}.",
+            contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
             guid=123,
             new=False,
         ),
         Card(
-            contents="The capital of {{c1::Germany}} is {{c2::Berlin}}.",
+            contents="<p>The capital of {{c1::Germany}} is {{c2::Berlin}}.</p>\n",
             guid=1,
             new=True,
         ),
