@@ -14,6 +14,9 @@ class Card:
     # Whether or not the card is new.
     new: bool = False
 
+    # TODO: Make this into an enum?
+    grouping: str = ""
+
 
 # TODO: HTML encode contents:
 # https://github.com/kerrickstaley/genanki#my-field-data-is-getting-garbled
@@ -27,16 +30,8 @@ def parse_card(card: str, tag: ClozeTag) -> Card:
     # TODO: What about cards that end with a ==?
 
     result: List[str] = []
-    s = separators()
+    s = tag.get_separators()
     for part in parts:
         result += [part, next(s)]
 
     return Card(contents="".join(result[:-1]), guid=tag.guid, new=tag.new)
-
-
-def separators() -> Generator[str, None, None]:
-    num = 1
-    while True:
-        yield f"{{{{c{num}::"
-        yield "}}"
-        num += 1
