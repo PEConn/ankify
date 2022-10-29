@@ -26,7 +26,15 @@ class ClozeTag:
     groupings: Optional[List[int]] = None
 
     def to_string(self):
-        return f"{self.prefix}<!-- cloze id:{self.guid} -->{self.suffix}"
+        if self.groupings is None:
+            grouping = ""
+        elif self.groupings == []:
+            grouping = "= "
+        else:
+            groups = ",".join([str(x) for x in self.groupings])
+            grouping = f"=:{groups} "
+
+        return f"{self.prefix}<!-- cloze id:{self.guid} {grouping}-->{self.suffix}"
 
     def get_separators(self) -> Generator[str, None, None]:
         num = 1

@@ -81,3 +81,26 @@ def test_separators_explicit_beyond():
     generator_equals(
         ["{{c2::", "}}", "{{c1::", "}}", "{{c3::", "}}"], tag.get_separators()
     )
+
+
+def check_output_is_unchanged(line: str):
+    tag = parse_cloze_tag(line, counting_generator())
+    assert tag is not None
+
+    assert line == tag.to_string()
+
+
+def test_to_string_basic():
+    check_output_is_unchanged("<!-- cloze id:1 -->")
+
+
+def test_to_string_surrounding_whitespace():
+    check_output_is_unchanged(" <!-- cloze id:1 -->  ")
+
+
+def test_to_string_grouping():
+    check_output_is_unchanged("<!-- cloze id:1 = -->")
+
+
+def test_to_string_explicit_grouping():
+    check_output_is_unchanged("<!-- cloze id:2 =:1,2,1 -->")
