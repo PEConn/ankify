@@ -25,6 +25,8 @@ def parse_card(card: str, tag: ClozeTag) -> Card:
     # 1. Split on ==.
     # 2. Join with ['{{c1::', '}}', '{{c2::', '}}', ..]
     parts = card.split("==")
+    if len(parts) % 2 != 1:
+        print(card)
     assert len(parts) % 2 == 1
     # TODO: What about cards that end with a ==?
 

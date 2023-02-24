@@ -9,6 +9,8 @@ def tree_walk(root: str, function: Callable[[str], None], extension: str = ".md"
             if not filename.endswith(extension):
                 continue
 
+            print(filename)
+
             function(os.path.join(root, filename))
 
 
