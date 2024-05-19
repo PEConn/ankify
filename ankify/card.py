@@ -11,6 +11,7 @@ class Card:
 
     contents: str
     guid: int
+    tags: [str]
 
     # Whether or not the card is new.
     new: bool = False
@@ -19,7 +20,7 @@ class Card:
     grouping: str = ""
 
 
-def parse_card(card: str, tag: ClozeTag) -> Card:
+def parse_card(card: str, tag: ClozeTag, filename: str) -> Card:
     card = card.strip()
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
@@ -37,4 +38,9 @@ def parse_card(card: str, tag: ClozeTag) -> Card:
 
     contents: str = convert("".join(result[:-1]))
 
-    return Card(contents=contents, guid=tag.guid, new=tag.new)
+    return Card(
+            contents=contents,
+            guid=tag.guid,
+            tags=[filename.replace(' ', '_')],
+            new=tag.new
+    )

@@ -8,6 +8,7 @@ from card import Card
 from guid import GuidGenerator, random_generator
 from parse import parse
 from file_reader import process_tree
+from model import MY_CLOZE_MODEL
 
 # Get the input args.
 # Create some object.
@@ -20,8 +21,8 @@ class ParseProcessor:
         self.cards: List[Card] = []
         self.generator = generator
 
-    def process_file(self, contents: str):
-        result = parse(contents, self.generator)
+    def process_file(self, filename: str, contents: str):
+        result = parse(contents, filename, self.generator)
 
         self.cards += result.cards
         return result.updated_file
@@ -31,7 +32,13 @@ def write_anki_deck(cards: List[Card]) -> None:
     deck = Deck(123456789, "Obsidian Notes")
 
     for card in cards:
-        deck.add_note(Note(model=CLOZE_MODEL, fields=[card.contents, ""], guid=card.guid))  # type: ignore
+        # print(card.tags)
+        deck.add_note(Note(
+            # model=CLOZE_MODEL,
+            model=MY_CLOZE_MODEL,
+            fields=[card.contents, ""],
+            tags=card.tags,
+            guid=card.guid))  # type: ignore
 
     Package(deck).write_to_file("output.apkg")  # type: ignore
 

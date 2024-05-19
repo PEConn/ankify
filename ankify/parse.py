@@ -15,7 +15,8 @@ class ParseResult:
 
 
 def parse(
-    contents: str, guid_generator: GuidGenerator = random_generator()
+        contents: str, filename: str,
+        guid_generator: GuidGenerator = random_generator()
 ) -> ParseResult:
     paragraphs = contents.split("\n\n")
     cards: List[Card] = []
@@ -24,7 +25,7 @@ def parse(
 
     for paragraph in paragraphs:
         if cloze_for_next:
-            cards += [parse_card(paragraph, cloze_for_next)]
+            cards += [parse_card(paragraph, cloze_for_next, filename)]
 
         cloze_for_next = parse_cloze_tag(paragraph, guid_generator)
 

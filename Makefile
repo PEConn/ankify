@@ -9,3 +9,4 @@ install:
 
 exe:
 	pyinstaller ankify/main.py
+
