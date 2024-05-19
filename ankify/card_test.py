@@ -8,6 +8,7 @@ def test_parse_card():
         contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
         guid=0,
         new=True,
+        tags=['file_name.md']
     )
 
-    assert exp == parse_card(card, ClozeTag(guid=0, new=True))
+    assert exp == parse_card(card, ClozeTag(guid=0, new=True), "file name.md")

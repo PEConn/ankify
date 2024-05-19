@@ -20,7 +20,10 @@ def test_tree_walk(fs: FakeFilesystem):
 
     results = Collector()
 
-    tree_walk("/", results.add)
+    def add_result(path, filename):
+        results.add(path)
+
+    tree_walk("/", add_result)
 
     assert ["/somefile.md", "/dir/otherfile.md"] == results.contents
 
@@ -33,7 +36,10 @@ def test_tree_walk_extension(fs: FakeFilesystem):
 
     results = Collector()
 
-    tree_walk("/", results.add, ".txt")
+    def add_result(path, filename):
+        results.add(path)
+
+    tree_walk("/", add_result, ".txt")
 
     assert ["/somefile.txt", "/dir/otherfile.txt"] == results.contents
 
@@ -42,7 +48,7 @@ def test_process_tree(fs: FakeFilesystem):
     fs.create_file("/somefile.md", contents="abc")
     fs.create_file("/dir/otherfile.md", contents="def")
 
-    def repeat(contents: str):
+    def repeat(filename: str, contents: str):
         return contents + contents
 
     process_tree("/", repeat)

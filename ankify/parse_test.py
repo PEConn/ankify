@@ -25,13 +25,15 @@ The capital of ==France== is ==Paris==.
 The capital of ==Germany== is ==Berlin==.
 """
 
+FILENAME = "test file.md"
+FILENAME_TAG = ["test_file.md"]
 
 def test_parse_num_results_single():
-    assert 1 == len(parse(SINGLE_CARD).cards)
+    assert 1 == len(parse(SINGLE_CARD, FILENAME).cards)
 
 
 def test_parse_num_results_multiple():
-    assert 2 == len(parse(MULTI_CARD).cards)
+    assert 2 == len(parse(MULTI_CARD, FILENAME).cards)
 
 
 def test_parse_single():
@@ -40,10 +42,11 @@ def test_parse_single():
             contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
             guid=0,
             new=True,
+            tags=FILENAME_TAG,
         )
     ]
 
-    assert exp == parse(SINGLE_CARD, guid_generator=counting_generator()).cards
+    assert exp == parse(SINGLE_CARD, FILENAME, guid_generator=counting_generator()).cards
 
 
 def test_parse_single_updated_file():
@@ -59,7 +62,7 @@ def test_parse_single_updated_file():
     """
     )
 
-    assert exp == parse(SINGLE_CARD, guid_generator=counting_generator()).updated_file
+    assert exp == parse(SINGLE_CARD, FILENAME, guid_generator=counting_generator()).updated_file
 
 
 def test_parse_multiple():
@@ -68,15 +71,17 @@ def test_parse_multiple():
             contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
             guid=123,
             new=False,
+            tags=FILENAME_TAG,
         ),
         Card(
             contents="<p>The capital of {{c1::Germany}} is {{c2::Berlin}}.</p>\n",
             guid=0,
             new=True,
+            tags=FILENAME_TAG,
         ),
     ]
 
-    assert exp == parse(MULTI_CARD, guid_generator=counting_generator()).cards
+    assert exp == parse(MULTI_CARD, FILENAME, guid_generator=counting_generator()).cards
 
 
 def test_parse_multiple_updated_file():
@@ -92,4 +97,4 @@ def test_parse_multiple_updated_file():
     """
     )
 
-    assert exp == parse(MULTI_CARD, guid_generator=counting_generator()).updated_file
+    assert exp == parse(MULTI_CARD, FILENAME, guid_generator=counting_generator()).updated_file

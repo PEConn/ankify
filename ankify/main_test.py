@@ -50,15 +50,18 @@ def test_run(fs: FakeFilesystem):
             contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
             guid=0,
             new=True,
+            tags=["basic"],
         ),
         Card(
             contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
             guid=123,
             new=False,
+            tags=["otherfile"],
         ),
         Card(
             contents="<p>The capital of {{c1::Germany}} is {{c2::Berlin}}.</p>\n",
             guid=1,
             new=True,
+            tags=["otherfile"],
         ),
     ] == cards
