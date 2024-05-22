@@ -9,7 +9,7 @@ def tree_walk(root: str, function: Callable[[str, str], None], extension: str = 
             if not filename.endswith(extension):
                 continue
 
-            print(filename)
+            # print(filename)
 
             function(os.path.join(root, filename), filename)
 

@@ -28,6 +28,9 @@ def parse_paragraph(
     cloze = parse_cloze_tag(paragraph, guid_generator)
 
     if cloze:
+        if cloze.new:
+            print("New card found in " + filename)
+
         # Consume (and update) the cloze and the next paragraph.
         contents = paragraphs[index + 1]
         card = parse_card(contents, cloze, filename)
