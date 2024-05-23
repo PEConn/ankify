@@ -13,7 +13,7 @@ def test_run(fs: FakeFilesystem):
     fs.create_file("/basic.md", contents=SINGLE_CARD)
     fs.create_file("/dir/otherfile.md", contents=MULTI_CARD)
 
-    cards = generate_cards("/", counting_generator())
+    cards = generate_cards("/", False, counting_generator())
 
     assert (
         dedent(

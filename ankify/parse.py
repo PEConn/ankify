@@ -65,3 +65,9 @@ def parse(
         index = r.next_index
 
     return ParseResult(cards, updated_file = "\n\n".join(updated_file))
+
+@dataclass
+class FileData:
+    """Holds data specific to the file we're currently reading."""
+
+    filename: str
