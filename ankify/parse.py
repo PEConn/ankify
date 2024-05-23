@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
+import yaml
+
+from file_data import FileData
 from card import Card, parse_card
 from guid import GuidGenerator, random_generator
 from cloze_tag import ClozeTag, parse_cloze_tag
@@ -21,7 +24,7 @@ class ParseParagraphResult:
 
 def parse_paragraph(
         paragraphs: List[str], index: int,
-        filename: str,
+        filedata: FileData,
         guid_generator: GuidGenerator = random_generator()
 ) -> ParseParagraphResult:
     paragraph = paragraphs[index]
@@ -29,11 +32,11 @@ def parse_paragraph(
 
     if cloze:
         if cloze.new:
-            print("New card found in " + filename)
+            print("New card found in " + filedata.name)
 
         # Consume (and update) the cloze and the next paragraph.
         contents = paragraphs[index + 1]
-        card = parse_card(contents, cloze, filename)
+        card = parse_card(contents, cloze, filedata)
 
         return ParseParagraphResult(
                 updated_paragraphs = [cloze.to_string(), contents],
@@ -56,9 +59,15 @@ def parse(
     cards: List[Card] = []
     updated_file: List[str] = []
 
+    if len(paragraphs) == 0:
+        return ParseResult([], contents)
+
+    frontmatter = parse_frontmatter(paragraphs[0])
+    filedata = FileData(filename, frontmatter.deck)
+
     index = 0
     while index < len(paragraphs):
-        r = parse_paragraph(paragraphs, index, filename, guid_generator)
+        r = parse_paragraph(paragraphs, index, filedata, guid_generator)
 
         updated_file += r.updated_paragraphs
         cards += r.cards
@@ -67,7 +76,20 @@ def parse(
     return ParseResult(cards, updated_file = "\n\n".join(updated_file))
 
 @dataclass
-class FileData:
-    """Holds data specific to the file we're currently reading."""
+class ParseFrontmatterResult:
+    deck: Optional[str] = None
 
-    filename: str
+def parse_frontmatter(paragraph: str):
+    # Frontmatter should start with a "---" and end with a "---".
+    lines = paragraph.split("\n")
+    if len(lines) < 3:
+        return ParseFrontmatterResult()
+    if lines[0] != "---" or lines[-1] != "---":
+        return ParseFrontmatterResult()
+
+    y = "\n".join(lines[1:-1])
+    parsed = yaml.safe_load(y)
+    if "deck" in parsed:
+        return ParseFrontmatterResult(parsed["deck"])
+
+    return ParseFrontmatterResult()

@@ -1,5 +1,6 @@
 from card import Card, parse_card
 from cloze_tag import ClozeTag
+from file_data import FileData
 
 
 def test_parse_card():
@@ -11,4 +12,4 @@ def test_parse_card():
         tags=['file_name.md']
     )
 
-    assert exp == parse_card(card, ClozeTag(guid=0, new=True), "file name.md")
+    assert exp == parse_card(card, ClozeTag(guid=0, new=True), FileData("file name.md"))

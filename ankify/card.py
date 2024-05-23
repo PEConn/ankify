@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from typing import Generator, List
+from typing import Generator, List, Optional
+
+from markdown import convert
 
 from cloze_tag import ClozeTag
-from markdown import convert
+from file_data import FileData
 
 # TODO: Clean up my terminology.
 @dataclass
@@ -19,8 +21,10 @@ class Card:
     # TODO: Make this into an enum?
     grouping: str = ""
 
+    deck: Optional[str] = None
 
-def parse_card(card: str, tag: ClozeTag, filename: str) -> Card:
+
+def parse_card(card: str, tag: ClozeTag, filedata: FileData) -> Card:
     card = card.strip()
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
@@ -41,6 +45,7 @@ def parse_card(card: str, tag: ClozeTag, filename: str) -> Card:
     return Card(
             contents=contents,
             guid=tag.guid,
-            tags=[filename.replace(' ', '_')],
-            new=tag.new
+            tags=[filedata.name.replace(' ', '_')],
+            new=tag.new,
+            deck = filedata.deck
     )

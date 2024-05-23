@@ -6,7 +6,7 @@ import argparse
 from genanki import Deck, Note, Package, CLOZE_MODEL  # type: ignore
 
 from card import Card
-from guid import GuidGenerator, random_generator
+from guid import GuidGenerator, random_generator, generate_deck_id
 from parse import parse
 from file_reader import process_tree
 from model import MY_CLOZE_MODEL
@@ -34,13 +34,25 @@ class ParseProcessor:
 
         return result.updated_file
 
+DECK_IDS: {
+}
 
 def write_anki_deck(cards: List[Card], dry: bool = False) -> None:
-    deck = Deck(123456789, "Obsidian Notes")
+    deck_names = set([card.deck for card in cards])
+    print(deck_names)
+
+    default_deck = Deck(123456789, "Obsidian Notes")
+    decks_by_name = dict()
+    decks_by_name[None] = default_deck
+
+    for name in deck_names:
+        if name == None:
+            continue
+        decks_by_name[name] = Deck(generate_deck_id(name), name)
 
     for card in cards:
         # print(card.tags)
-        deck.add_note(Note(
+        decks_by_name[card.deck].add_note(Note(
             # model=CLOZE_MODEL,
             model=MY_CLOZE_MODEL,
             fields=[card.contents, ""],
@@ -48,7 +60,7 @@ def write_anki_deck(cards: List[Card], dry: bool = False) -> None:
             guid=card.guid))  # type: ignore
 
     if not dry:
-        Package(deck).write_to_file("output.apkg")  # type: ignore
+        Package(list(decks_by_name.values())).write_to_file("output.apkg")  # type: ignore
 
 
 def generate_cards(
