@@ -6,7 +6,7 @@ import yaml
 from file_data import FileData
 from card import Card, parse_card
 from guid import GuidGenerator, random_generator
-from cloze_tag import ClozeTag, parse_cloze_tag
+from cloze_tag import ClozeTag, parse_cloze_tag, parse_inline_cloze_tag, strip_inline_cloze
 
 # TODO: Do error handling.
 @dataclass
@@ -29,6 +29,7 @@ def parse_paragraph(
 ) -> ParseParagraphResult:
     paragraph = paragraphs[index]
     cloze = parse_cloze_tag(paragraph, guid_generator)
+    inline_cloze = parse_inline_cloze_tag(paragraph, guid_generator)
 
     if cloze:
         if cloze.new:
@@ -41,6 +42,17 @@ def parse_paragraph(
         return ParseParagraphResult(
                 updated_paragraphs = [cloze.to_string(), contents],
                 next_index = index + 2,
+                cards = [card]
+        )
+    elif inline_cloze:
+        contents = strip_inline_cloze(paragraphs[index])
+        print(contents)
+        card = parse_card(contents, inline_cloze, filedata)
+
+        print(inline_cloze)
+        return ParseParagraphResult(
+                updated_paragraphs = [contents + inline_cloze.to_string()],
+                next_index = index + 1,
                 cards = [card]
         )
     else:

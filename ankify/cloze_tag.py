@@ -72,6 +72,39 @@ def parse_cloze_tag(line: str, guid_generator: GuidGenerator) -> Optional[ClozeT
     if not "cloze" in parts:
         return None
 
+    return create_cloze(parts, prefix, suffix, guid_generator)
+
+def parse_inline_cloze_tag(line: str, guid_generator: GuidGenerator) -> Optional[ClozeTag]:
+    # An inline cloze tag comes at the end of a note.
+    # Such as:
+    #   The capital of ==Wales== is ==Cardiff==. <!-- cloze -->
+
+    unstripped_line = line
+    line = line.strip()
+
+    if not (line.endswith("-->") and "<!--" in line):
+        return None
+
+    if line.startswith("<!--"):
+        # This is a standard cloze
+        return None
+
+    cloze = line[line.find("<!--"):]
+    parts = cloze.split(" ")
+    return create_cloze(parts, prefix="", suffix="", guid_generator=guid_generator)
+
+def strip_inline_cloze(line: str):
+    # Turns
+    #   The capital of ==Wales== is ==Cardiff==. <!-- cloze -->
+    # Into
+    #   The capital of ==Wales== is ==Cardiff==.
+
+    if not "<!--" in line:
+        return line
+    return line[:line.rfind("<!--")]
+
+
+def create_cloze(parts: List[str], prefix: str, suffix: str, guid_generator: GuidGenerator) -> ClozeTag:
     guid = None
     new = True
     groupings: Optional[List[int]] = None
@@ -97,3 +130,4 @@ def parse_cloze_tag(line: str, guid_generator: GuidGenerator) -> Optional[ClozeT
     return ClozeTag(
         guid=guid, prefix=prefix, suffix=suffix, new=new, groupings=groupings
     )
+
