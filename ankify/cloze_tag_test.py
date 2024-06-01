@@ -1,6 +1,6 @@
 from typing import Generator, List
 
-from cloze_tag import ClozeTag, parse_cloze_tag
+from cloze_tag import ClozeTag, parse_cloze_tag, parse_inline_cloze_tag
 from test_utils import counting_generator
 
 
@@ -104,3 +104,18 @@ def test_to_string_grouping():
 
 def test_to_string_explicit_grouping():
     check_output_is_unchanged("<!-- cloze id:2 =:1,2,1 -->")
+
+def test_inline_cloze_tag():
+    assert ClozeTag(guid=0, new=True) == parse_inline_cloze_tag(
+        "Here's a paragraph.<!-- cloze -->", counting_generator()
+    )
+
+    assert ClozeTag(guid=0, new=True) == parse_inline_cloze_tag(
+        "Here's a paragraph. <!-- cloze -->", counting_generator()
+    )
+
+def test_inline_cloze_tag_must_be_at_end():
+    assert None == parse_inline_cloze_tag(
+        "Here's a paragraph. <!-- cloze --> Some more paragraph.",
+        counting_generator()
+    )

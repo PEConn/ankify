@@ -98,3 +98,20 @@ def test_parse_multiple_updated_file():
     )
 
     assert exp == parse(MULTI_CARD, FILENAME, guid_generator=counting_generator()).updated_file
+
+def test_parse_inline():
+    file = "The capital of ==France== is ==Paris==. <!-- cloze -->"
+    exp_cards = [
+        Card(
+            contents="<p>The capital of {{c1::France}} is {{c2::Paris}}.</p>\n",
+            guid=0,
+            new=True,
+            tags=FILENAME_TAG,
+        )
+    ]
+
+    exp_file = "The capital of ==France== is ==Paris==. <!-- cloze id:0 -->"
+
+    res = parse(file, FILENAME, guid_generator=counting_generator())
+    assert exp_cards == res.cards
+    assert exp_file == res.updated_file
