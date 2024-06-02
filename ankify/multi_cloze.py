@@ -48,15 +48,12 @@ def parse_multi_cloze(
     # For each line after the first, treat it as an inline cloze:
     for line in lines[start_line:]:
         cloze = parse_inline_cloze_tag(line, guid_generator)
-        sep = ""
-        if not cloze:
-            sep = " "
-            cloze = create_cloze([], "", "", guid_generator)
 
         contents = strip_inline_cloze(line)
 
         if not "==" in contents:
             print(f"Ignoring line: {line}")
+            updated_paragraph += [line]
             continue
 
         prefix = ""
@@ -66,7 +63,15 @@ def parse_multi_cloze(
             contents = contents[i:]
         else:
             print(f"Ignoring line: {line}")
+            updated_paragraph += [line]
             continue
+
+        # create_cloze will call guid_generator, incrementing it, so we call it
+        # after checking the content is good.
+        sep = ""
+        if not cloze:
+            sep = " "
+            cloze = create_cloze([], "", "", guid_generator)
 
         card = parse_card(contents, cloze, file_data)
         cards += [parse_card(contents, cloze, file_data)]
