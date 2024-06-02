@@ -119,3 +119,6 @@ def test_inline_cloze_tag_must_be_at_end():
         "Here's a paragraph. <!-- cloze --> Some more paragraph.",
         counting_generator()
     )
+
+def test_multi_cloze():
+    pass

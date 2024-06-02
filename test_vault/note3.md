@@ -10,3 +10,10 @@ Now time for some cards.
 The capital of ==England== is ==London==.
 
 Now we have a special, ==inline note==. <!-- cloze -->
+
+OK, let's try something really fancy:
+
+<!-- clozes -->
+- Cloze ==one==. <!-- cloze id:0 -->
+- Cloze ==two== is ==thing==.
+

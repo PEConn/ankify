@@ -115,3 +115,28 @@ def test_parse_inline():
     res = parse(file, FILENAME, guid_generator=counting_generator())
     assert exp_cards == res.cards
     assert exp_file == res.updated_file
+
+def new_card(guid: int, contents: str):
+    return Card(contents = contents, guid=guid, new=True, tags=FILENAME_TAG)
+
+def test_parse_multicloze():
+    file = dedent("""
+    <!-- clozes -->
+    - Some ==cloze==.
+    - Another ==cloze== is ==this==.
+    """).strip()
+
+    exp_cards = [
+            new_card(0, "<p>Some {{c1::cloze}}.</p>\n"),
+            new_card(1, "<p>Another {{c1::cloze}} is {{c2::this}}.</p>\n"),
+    ]
+
+    exp_file = dedent("""
+    <!-- clozes -->
+    - Some ==cloze==. <!-- cloze id:0 -->
+    - Another ==cloze== is ==this==. <!-- cloze id:1 -->
+    """).strip()
+    
+    res = parse(file, FILENAME, guid_generator=counting_generator())
+    assert exp_cards == res.cards
+    assert exp_file == res.updated_file

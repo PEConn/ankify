@@ -7,6 +7,7 @@ from file_data import FileData
 from card import Card, parse_card
 from guid import GuidGenerator, random_generator
 from cloze_tag import ClozeTag, parse_cloze_tag, parse_inline_cloze_tag, strip_inline_cloze
+from multi_cloze import parse_multi_cloze
 
 # TODO: Do error handling.
 @dataclass
@@ -28,10 +29,19 @@ def parse_paragraph(
         guid_generator: GuidGenerator = random_generator()
 ) -> ParseParagraphResult:
     paragraph = paragraphs[index]
+
     cloze = parse_cloze_tag(paragraph, guid_generator)
     inline_cloze = parse_inline_cloze_tag(paragraph, guid_generator)
+    multi_cloze = parse_multi_cloze(paragraph, filedata, guid_generator)
+    print(multi_cloze)
 
-    if cloze:
+    if multi_cloze:
+        return ParseParagraphResult(
+                updated_paragraphs = [multi_cloze.updated_paragraph],
+                next_index = index + 1,
+                cards = multi_cloze.cards,
+        )
+    elif cloze:
         if cloze.new:
             print("New card found in " + filedata.name)
 
