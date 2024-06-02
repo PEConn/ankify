@@ -124,7 +124,8 @@ def test_parse_multicloze():
     <!-- clozes -->
     - Some ==cloze==.
     - Another ==cloze== is ==this==.
-    """).strip()
+
+    """)
 
     exp_cards = [
             new_card(0, "<p>Some {{c1::cloze}}.</p>\n"),
@@ -135,7 +136,8 @@ def test_parse_multicloze():
     <!-- clozes -->
     - Some ==cloze==. <!-- cloze id:0 -->
     - Another ==cloze== is ==this==. <!-- cloze id:1 -->
-    """).strip()
+
+    """)
     
     res = parse(file, FILENAME, guid_generator=counting_generator())
     assert exp_cards == res.cards

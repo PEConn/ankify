@@ -30,18 +30,15 @@ def parse_paragraph(
 ) -> ParseParagraphResult:
     paragraph = paragraphs[index]
 
-    cloze = parse_cloze_tag(paragraph, guid_generator)
-    inline_cloze = parse_inline_cloze_tag(paragraph, guid_generator)
-    multi_cloze = parse_multi_cloze(paragraph, filedata, guid_generator)
-    print(multi_cloze)
-
-    if multi_cloze:
+    # TODO: This is a problem - we don't want the non-matching parse attempts
+    # to mutate the generator.
+    if (multi_cloze := parse_multi_cloze(paragraph, filedata, guid_generator)):
         return ParseParagraphResult(
                 updated_paragraphs = [multi_cloze.updated_paragraph],
                 next_index = index + 1,
                 cards = multi_cloze.cards,
         )
-    elif cloze:
+    elif (cloze := parse_cloze_tag(paragraph, guid_generator)):
         if cloze.new:
             print("New card found in " + filedata.name)
 
@@ -54,7 +51,7 @@ def parse_paragraph(
                 next_index = index + 2,
                 cards = [card]
         )
-    elif inline_cloze:
+    elif (inline_cloze := parse_inline_cloze_tag(paragraph, guid_generator)):
         contents = strip_inline_cloze(paragraphs[index])
         print(contents)
         card = parse_card(contents, inline_cloze, filedata)

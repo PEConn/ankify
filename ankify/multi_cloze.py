@@ -26,16 +26,27 @@ def parse_multi_cloze(
     # then one is inserted).
 
     lines = paragraph.split("\n")
-    if len(lines) < 2:
-        return None
-    if lines[0].strip() != "<!-- clozes -->":
+    updated_paragraph = []
+
+    # Find the opening <!-- clozes -->.
+    found = False
+    for line in lines:
+        if line == "":
+            updated_paragraph += [""]
+        elif line.strip() == "<!-- clozes -->":
+            updated_paragraph += [line]
+            found = True
+            break
+        else:
+            return None
+
+    if not found:
         return None
 
+    start_line = len(updated_paragraph)
     cards = []
-    updated_paragraph = [lines[0]]
-
     # For each line after the first, treat it as an inline cloze:
-    for line in lines[1:]:
+    for line in lines[start_line:]:
         cloze = parse_inline_cloze_tag(line, guid_generator)
         sep = ""
         if not cloze:
