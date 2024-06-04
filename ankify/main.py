@@ -34,9 +34,6 @@ class ParseProcessor:
 
         return result.updated_file
 
-DECK_IDS: {
-}
-
 def write_anki_deck(cards: List[Card], dry: bool = False) -> None:
     deck_names = set([card.deck for card in cards])
     print(deck_names)

@@ -53,10 +53,8 @@ def parse_paragraph(
         )
     elif (inline_cloze := parse_inline_cloze_tag(paragraph, guid_generator)):
         contents = strip_inline_cloze(paragraphs[index])
-        print(contents)
         card = parse_card(contents, inline_cloze, filedata)
 
-        print(inline_cloze)
         return ParseParagraphResult(
                 updated_paragraphs = [contents + inline_cloze.to_string()],
                 next_index = index + 1,
