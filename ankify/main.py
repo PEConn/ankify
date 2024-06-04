@@ -6,7 +6,7 @@ import argparse
 from genanki import Deck, Note, Package, CLOZE_MODEL  # type: ignore
 
 from card import Card
-from guid import GuidGenerator, random_generator, generate_deck_id
+from guid import GuidGenerator, counting_generator, random_generator, generate_deck_id
 from parse import parse
 from file_reader import process_tree
 from model import MY_CLOZE_MODEL
@@ -96,7 +96,12 @@ if __name__ == "__main__":
     if args.dry:
         print("Dry run...")
 
-    cards = generate_cards(args.root, args.dry)
+    # Generate all the cards first with a dry run, to get a list of card ids,
+    # then generate them all again, so we can avoid collisions.
+    existing_cards = generate_cards(args.root, dry = True, generator = random_generator())
+    existing_ids = set([card.guid for card in existing_cards if not card.new])
+
+    cards = generate_cards(args.root, args.dry, counting_generator(existing_ids))
 
     new_cards = len([card for card in cards if card.new])
 
