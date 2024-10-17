@@ -29,6 +29,7 @@ def parse_paragraph(
         guid_generator: GuidGenerator = random_generator()
 ) -> ParseParagraphResult:
     paragraph = paragraphs[index]
+    hasNextParagraph = len(paragraphs) > index + 1
 
     # TODO: This is a problem - we don't want the non-matching parse attempts
     # to mutate the generator.
@@ -38,7 +39,8 @@ def parse_paragraph(
                 next_index = index + 1,
                 cards = multi_cloze.cards,
         )
-    elif (cloze := parse_cloze_tag(paragraph, guid_generator)):
+    elif ((cloze := parse_cloze_tag(paragraph, guid_generator))
+            and hasNextParagraph):
         if cloze.new:
             print("New card found in " + filedata.name)
 
