@@ -142,3 +142,32 @@ def test_parse_multicloze():
     res = parse(file, FILENAME, guid_generator=counting_generator())
     assert exp_cards == res.cards
     assert exp_file == res.updated_file
+
+def test_parse_multicloze_with_reformat():
+    file = dedent("""
+    <!-- clozes -->
+    - Some ==cloze==.
+    - The best fruits are: ==apple==, ==banana== and ==tangerine==. <!-- cloze reformat -->
+
+    """)
+
+    exp_cards = [
+            new_card(0, "<p>Some {{c1::cloze}}.</p>\n"),
+            new_card(1, "<p>The best fruits are:</p>\n\n<ul>\n"
+                + "<li><p>{{c1::apple}}</p></li>\n"
+                + "<li><p>{{c2::banana}}</p></li>\n"
+                + "<li><p>{{c3::tangerine}}</p></li>\n"
+                + "</ul>\n"
+            )
+    ]
+
+    exp_file = dedent("""
+    <!-- clozes -->
+    - Some ==cloze==. <!-- cloze id:0 -->
+    - The best fruits are: ==apple==, ==banana== and ==tangerine==. <!-- cloze id:1 reformat -->
+
+    """)
+    
+    res = parse(file, FILENAME, guid_generator=counting_generator())
+    assert exp_cards == res.cards
+    assert exp_file == res.updated_file

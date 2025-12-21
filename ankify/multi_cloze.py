@@ -22,8 +22,8 @@ def parse_multi_cloze(
     # - Question ==one==. <!-- cloze id: 123 -->
     # - Question ==two== is ==this==.
     #
-    # If there's cloze missing at the end of the line (and it has a highlight,
-    # then one is inserted).
+    # If there's cloze missing at the end of the line (and it has a highlight),
+    # then one is inserted.
 
     lines = paragraph.split("\n")
     updated_paragraph = []
@@ -51,8 +51,8 @@ def parse_multi_cloze(
 
         contents = strip_inline_cloze(line)
 
-        if not "==" in contents:
-            print(f"Ignoring line: {line}")
+        if not "==" in contents and not cloze:
+            # print(f"Ignoring line: {line}")
             updated_paragraph += [line]
             continue
 
@@ -62,7 +62,7 @@ def parse_multi_cloze(
             prefix = contents[:i]
             contents = contents[i:]
         else:
-            print(f"Ignoring line: {line}")
+            # print(f"Ignoring line: {line}")
             updated_paragraph += [line]
             continue
 

@@ -25,6 +25,10 @@ class ClozeTag:
     # A populated list gives the number each cloze should have.
     groupings: Optional[List[int]] = None
 
+    # If this is true and the card contains a list of clozes, put each cloze on its
+    # own line.
+    reformat: bool = False
+
     def to_string(self):
         if self.groupings is None:
             grouping = ""
@@ -34,7 +38,9 @@ class ClozeTag:
             groups = ",".join([str(x) for x in self.groupings])
             grouping = f"=:{groups} "
 
-        return f"{self.prefix}<!-- cloze id:{self.guid} {grouping}-->{self.suffix}"
+        reformat = "reformat " if self.reformat else ""
+
+        return f"{self.prefix}<!-- cloze id:{self.guid} {grouping}{reformat}-->{self.suffix}"
 
     def get_separators(self) -> Generator[str, None, None]:
         num = 1
@@ -107,6 +113,7 @@ def strip_inline_cloze(line: str):
 def create_cloze(parts: List[str], prefix: str, suffix: str, guid_generator: GuidGenerator) -> ClozeTag:
     guid = None
     new = True
+    reformat = False
     groupings: Optional[List[int]] = None
 
     for part in parts:
@@ -123,11 +130,13 @@ def create_cloze(parts: List[str], prefix: str, suffix: str, guid_generator: Gui
                 groupings = [int(x) for x in part[len("=:") :].split(",")]
             except ValueError:
                 print(f"Poorly formatted grouping: '{part}'")
+        elif part == "reformat":
+            reformat = True
 
     if guid is None:
         guid = next(guid_generator)
 
     return ClozeTag(
-        guid=guid, prefix=prefix, suffix=suffix, new=new, groupings=groupings
+        guid=guid, prefix=prefix, suffix=suffix, new=new, groupings=groupings, reformat = reformat
     )
 

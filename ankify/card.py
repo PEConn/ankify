@@ -5,6 +5,7 @@ from markdown import convert
 
 from cloze_tag import ClozeTag
 from file_data import FileData
+from reformat import reformat
 
 # TODO: Clean up my terminology.
 @dataclass
@@ -25,6 +26,12 @@ class Card:
 
 
 def parse_card(card: str, tag: ClozeTag, filedata: FileData) -> Card:
+    if tag.reformat:
+        reformatted_card = reformat(card)
+        if reformatted_card == card:
+            print("Could not reformat " + card)
+        card = reformatted_card
+
     card = card.strip()
     # card = "The capital of ==France== is ==Paris==."
     # 1. Split on ==.
